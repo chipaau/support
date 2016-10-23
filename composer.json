@@ -1,0 +1,20 @@
+{
+    "name": "chipaau/support",
+    "description": "laravel framework based, integrated with jsonapi support library with extended validation support",
+    "type": "project",
+    "require": {
+        "laravel/socialite": "^2.0",
+        "neomerx/json-api": "^0.8.10",
+        "illuminate/validation": "5.1.*|5.3.*",
+        "illuminate/support": "5.1.*|5.3.*",
+        "illuminate/container": "5.1.*|5.3.*",
+        "illuminate/config": "5.1.*|5.3.*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ahmed Shifau",
+            "email": "shifau@aasandha.mv"
+        }
+    ]
+}
