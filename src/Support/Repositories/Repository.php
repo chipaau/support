@@ -59,6 +59,13 @@ abstract class Repository implements RepositoryInterface
         }
     }
 
+    public function load(EncodingParametersInterface $parameters = null, Model $model)
+    {
+        $with = (!is_null($parameters) && $parameters->getIncludePaths()) ? $parameters->getIncludePaths() : array();
+        $model->load($with);
+        return $model;
+    }
+
     protected function getFilteringColumns(array $filtering = array())
     {
         //get the available filtering columns to be filtered
