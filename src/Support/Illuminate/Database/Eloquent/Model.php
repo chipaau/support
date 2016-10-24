@@ -20,6 +20,7 @@ abstract class Model extends EloquentModel implements ModelInterface
      * @param  array  $parameters
      * @return mixed
      */
+    
     public function __call($method, $parameters)
     {
         if (strpos($method, '-') !== false) {

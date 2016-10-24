@@ -394,4 +394,9 @@ abstract class Repository implements RepositoryInterface
         $this->model = $this->model->newQuery()->findOrFail($resourceId);
         return $this;
     }
+
+    public function findBy(array $conditions, array $with = array())
+    {
+        return $this->model->with($with)->where($conditions)->firstOrFail();
+    }
 }
