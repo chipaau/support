@@ -5,6 +5,7 @@ namespace Support\Illuminate\Database\Eloquent;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model AS EloquentModel;
 use Support\Illuminate\Database\Eloquent\ModelInterface;
+use Support\Illuminate\Database\Eloquent\Relations\HasManyThroughMany;
 
 
 /**
@@ -29,6 +30,32 @@ abstract class Model extends EloquentModel implements ModelInterface
         }
 
         return parent::__call($method, $parameters);
+    }
+
+    /**
+     * get relationships through another table
+     * @param  string  $related    first ralation table
+     * @param  string  $through    second relation table
+     * @param  string  $firstKey   key of first table
+     * @param  string  $secondKey  second key
+     * @param  string  $localKey   local key
+     * @param  string  $throughKey through key
+     * @return HasManyThroughMany
+     */
+    public function hasManyThroughMany(
+        $related,
+        $through,
+        $firstKey = null,
+        $secondKey = null,
+        $localKey = null,
+        $throughKey = null
+    )
+    {
+        $through = new $through;
+        $firstKey = $firstKey ?: $this->getForeignKey();
+        $secondKey = $secondKey ?: $through->getForeignKey();
+        $localKey = $localKey ?: $this->getKeyName();
+        return new HasManyThroughMany((new $related)->newQuery(), $this, $through, $firstKey, $secondKey, $localKey, $throughKey);
     }
 
 }
