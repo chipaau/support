@@ -137,7 +137,7 @@ abstract class AbstractValidator
         }
 
         if (method_exists($this, 'getSometimes')) {
-            $this->getSometimes();
+            call_user_func_array([$this, 'getSometimes'], [$this->validator]);
         }
 
         if ($this->validator->fails()) {
