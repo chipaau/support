@@ -92,7 +92,8 @@ abstract class Repository implements RepositoryInterface
 
     protected function getSorting(EncodingParametersInterface $parameters)
     {
-        return $parameters->getSortParameters();
+        $sorting = $parameters->getSortParameters();
+        return is_array($sorting) ? $sorting : array();
     }
 
     protected function buildSorting($query, array $sorting = array(), $relation = null)
