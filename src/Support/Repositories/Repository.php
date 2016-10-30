@@ -90,6 +90,30 @@ abstract class Repository implements RepositoryInterface
         
     }
 
+    protected function getSorting(EncodingParametersInterface $parameters)
+    {
+        return $parameters->getSortParameters();
+    }
+
+    protected function buildSorting($query, array $sorting = array(), $relation = null)
+    {
+        if (empty($sorting)) {
+            return $query;
+        }
+        $model = $this->relation ? $this->model->{$this->relation}()->getModel() : $this->model;
+        $mappings = call_user_func_array([$model, 'mappings'], []);
+        foreach ($sorting as $sort) {
+            $field = $sort->getField();
+            if ($dbField = array_search($field, $mappings)) {
+                $field = $dbField;
+            }
+            
+            $query = $query->orderBy($field, ($sort->isAscending() ? 'asc' : 'desc'));
+        }
+
+        return $query;
+    }
+
     public function getPaginatedCollection(EncodingParametersInterface $parameters, callable $callback = null)
     {
         $query = $this->with($parameters);
@@ -116,6 +140,8 @@ abstract class Repository implements RepositoryInterface
                 
             }
         }
+
+        $query = $this->buildSorting($query, $this->getSorting($parameters));
         
         return $this->paginateBuilder($query, $parameters);
     }
