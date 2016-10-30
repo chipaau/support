@@ -105,7 +105,7 @@ abstract class Repository implements RepositoryInterface
         $mappings = call_user_func_array([$model, 'mappings'], []);
         foreach ($sorting as $sort) {
             $field = $sort->getField();
-            if ($dbField = array_search($field, $mappings)) {
+            if (is_array($mappings) && $dbField = array_search($field, $mappings)) {
                 $field = $dbField;
             }
             
