@@ -25,6 +25,7 @@ class Validator extends IlluminateValidation
 
     public function iterate(Request $request, $attribute, AbstractValidator $validator, $messages = [])
     {
+        $this->files = property_exists($this, 'files') ? $this->files : [];
         $payload = array_merge($this->data, $this->files);
         $input = array_get($payload, $attribute);
         if ((!is_null($input) && !is_array($input)) || empty($input)) {
