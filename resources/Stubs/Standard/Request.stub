@@ -2,15 +2,17 @@
 
 namespace {{namespace}}Http\Requests;
 
-use {{namespace}}Http\Requests\Request;
+use Support\JsonApi\Http\JsonApiRequest;
+use Support\Repositories\Repository;
 use {{namespace}}Validators\{{resource}}Validator;
 
-class {{resource}}Request extends Request
+class {{resource}}Request extends JsonApiRequest
 {
     protected function pagingParameters()
     {
         return [
-            // Paging params
+            Repository::PARAM_PAGING_SIZE,
+            Repository::PARAM_PAGING_NUMBER
         ];
     }
 

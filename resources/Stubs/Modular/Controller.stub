@@ -1,13 +1,13 @@
 <?php
 
-namespace {{namespace}}Http\Controllers;
+namespace {{namespace}}\{{controllers}};
 
 use Illuminate\Container\Container;
-use {{namespace}}Http\Controllers\Controller;
-use {{namespace}}Http\Requests\{{resource}}Request;
-use {{namespace}}Repositories\{{resource}}Repository;
+use Support\Illuminate\Http\ApiController;
+use {{namespace}}\{{requests}}\{{resource}}Request;
+use {{namespace}}\{{repositories}}\{{resource}}Repository;
 
-class {{class}}Controller extends Controller
+class {{class}}Controller extends ApiController
 {
     public function __construct(Container $container, {{resource}}Repository $repository, {{resource}}Request $request)
     {

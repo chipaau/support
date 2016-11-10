@@ -1,0 +1,21 @@
+<?php
+
+namespace {{namespace}}\{{repository}};
+
+use {{namespace}}\{{model}}\{{resource}};
+use Support\Repositories\Repository;
+
+class {{resource}}Repository extends Repository
+{
+    public function __construct({{resource}} $model)
+    {
+        parent::__construct($model);
+    }
+
+    public static function getFiltering()
+    {
+        return [
+            // Allowed filering parameters here
+        ];
+    }
+}
