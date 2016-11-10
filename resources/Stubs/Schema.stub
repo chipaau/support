@@ -1,0 +1,15 @@
+<?php
+
+namespace {{namespace}}Schemas;
+
+use Support\JsonApi\Core\Schema;
+use {{namespace}}{{resource}};
+
+class {{resource}}Schema extends Schema
+{
+    /** Type */
+    const TYPE = '{{type}}';
+
+    /** Model class name */
+    const MODEL = {{resource}}::class;
+}

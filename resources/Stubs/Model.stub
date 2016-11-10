@@ -1,0 +1,19 @@
+<?php
+
+namespace {{namespace}};
+
+use Support\Illuminate\Database\Eloquent\Model;
+
+class {{resource}} extends Model
+{
+    protected $fillable = [
+        // Fillables here
+    ];
+
+    public static function mappings()
+    {
+        return [
+            // Mappings Data here
+        ];
+    }
+}

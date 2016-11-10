@@ -1,0 +1,16 @@
+<?php
+
+namespace {{namespace}}Http\Controllers;
+
+use Illuminate\Container\Container;
+use {{namespace}}Http\Controllers\Controller;
+use {{namespace}}Http\Requests\{{resource}}Request;
+use {{namespace}}Repositories\{{resource}}Repository;
+
+class {{class}}Controller extends Controller
+{
+    public function __construct(Container $container, {{resource}}Repository $repository, {{resource}}Request $request)
+    {
+        parent::__construct($container, $repository, $request);    
+    }
+}
