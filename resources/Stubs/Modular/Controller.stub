@@ -1,0 +1,16 @@
+<?php
+
+namespace {{namespace}}\{{controllers}};
+
+use Illuminate\Container\Container;
+use Support\Illuminate\Http\ApiController;
+use {{namespace}}\{{requests}}\{{resource}}Request;
+use {{namespace}}\{{repositories}}\{{resource}}Repository;
+
+class {{class}}Controller extends ApiController
+{
+    public function __construct(Container $container, {{resource}}Repository $repository, {{resource}}Request $request)
+    {
+        parent::__construct($container, $repository, $request);    
+    }
+}

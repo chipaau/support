@@ -1,0 +1,40 @@
+<?php
+
+namespace {{namespace}}\{{validators}};
+
+use Illuminate\Http\Request;
+use Support\Validation\AbstractValidator;
+
+class {{resource}}Validator extends AbstractValidator {
+
+    public function rules(Request $request, array $params = array())
+    {
+        return [
+        	// Rules
+        ];
+    }
+
+    public function mappings()
+    {
+        return [
+        	// Mappings
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+        	// Messages
+        ];
+    }
+
+    public function after($validator)
+    {
+        // To do
+    }
+
+    public function sometimes($validator)
+    {
+        // To do
+    }
+}

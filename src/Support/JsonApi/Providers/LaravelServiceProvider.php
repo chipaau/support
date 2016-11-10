@@ -128,6 +128,10 @@ class LaravelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->publishes([
+            __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR .'config.php' => config_path('jsonapi.php'),
+        ]);
+
         $this->configureJsonApiRequests();
         $this->registerExceptionHandler();
     }

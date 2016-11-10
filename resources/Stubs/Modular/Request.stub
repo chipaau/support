@@ -1,0 +1,60 @@
+<?php
+
+namespace {{namespace}}\{{requests}};
+
+use Support\JsonApi\Http\JsonApiRequest;
+use Support\Repositories\Repository;
+use {{namespace}}\{{validators}}\{{resource}}Validator;
+
+class {{resource}}Request extends JsonApiRequest
+{
+    protected function pagingParameters()
+    {
+        return [
+            Repository::PARAM_PAGING_SIZE,
+            Repository::PARAM_PAGING_NUMBER
+        ];
+    }
+
+    /**
+    * @return boolean
+    */
+    protected function unrecognizedParameters()
+    {
+        return false;
+    }
+
+    protected function includeParameters()
+    {
+        return [
+            // Include params
+        ];
+    }
+
+    protected function fieldSetParameters()
+    {
+        return [
+            // Fieldset params
+        ];
+    }
+
+    protected function sortFieldParameters()
+    {
+        return [
+            // Sort params
+        ];
+    }
+
+    public function filteringParameters()
+    {
+        return [
+            // Filtering params
+        ];
+    }
+    
+    public function validator()
+    {
+        return {{resource}}Validator::class;
+    }
+
+}
