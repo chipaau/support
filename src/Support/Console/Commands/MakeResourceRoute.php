@@ -14,7 +14,7 @@ class MakeResourceRoute extends Command
      *
      * @var string
      */
-    protected $signature = 'support:resource:route {resources*}';
+    protected $signature = 'support:resource:route {resources*} {--module=*}';
 
     /**
      * The console command description.
@@ -46,26 +46,43 @@ class MakeResourceRoute extends Command
         $ds = DIRECTORY_SEPARATOR;
         $resources = $this->argument('resources');
         $resources = !is_array($resources) ? [$resources] : $resources;
+        $module = $this->option('module');
+        $routesFile = base_path('routes') . $ds . 'web.php';
+
+        if ($module) {
+            $module = is_array($module) ? $module[0] : $module;
+            $moduleDirectory = config('support.module.directory') . $ds . ucfirst($module);
+            
+            $this->namespace = $this->getAppNamespace() . ucfirst($module);
+            $routesFile = config('support.module.directory') . $ds . ucfirst($module) . $ds . config('support.module.routes');
+            
+            if (!file_exists($moduleDirectory)) {
+                $this->error("The requested module '$moduleDirectory' does not exists!");
+                return;
+            }
+
+            if(config('support.namespace')) {
+                $this->namespace = config('support.namespace');
+            }
+        }
         
         foreach ($resources as $resource) {
-            $stub = file_get_contents(__DIR__ . $ds . '..' . $ds . '..' . $ds . '..' . $ds . '..' . $ds . 'resources' . $ds . 'Stubs' . $ds . 'Route.stub');
+            $stub = file_get_contents(__DIR__ . $ds . '..' . $ds . '..' . $ds . '..' . $ds . '..' . $ds . 'resources' . $ds . 'Stubs' . $ds . (empty($module) ? 'Standard' : 'Modular') . $ds . 'Route.stub');
             $stub = str_replace([
                         '{{resource}}',                    '{{class}}'],
                         [str_singular(ucfirst($resource)),  str_plural(ucfirst($resource))],
                         $stub);
 
-            $directory = base_path('routes');
-
-            if (!file_exists($directory)) {
-                mkdir($directory, 0777, true);
+            if (!file_exists($routesFile)) {
+                $this->error('Could not update routes file \'' . $routesFile . '\' as it does not exist!');
+                return;
             }
 
-            $routes = file_get_contents($directory . $ds . 'web.php');
+            $routes = file_get_contents($routesFile);
             $stub = $routes ? $routes . "\n" . $stub : $stub;
 
-            $filename = $directory . $ds . 'web.php';
-            file_put_contents($filename, $stub);
-            $this->info($filename . ' routes updated!');
+            file_put_contents($routesFile, $stub);
+            $this->info($routesFile . ' routes updated!');
         }
     }
 }

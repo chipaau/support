@@ -14,7 +14,7 @@ class MakeResourceValidator extends Command
      *
      * @var string
      */
-    protected $signature = 'support:resource:validator {resources*}';
+    protected $signature = 'support:resource:validator {resources*} {--module=*}';
 
     /**
      * The console command description.
@@ -46,15 +46,39 @@ class MakeResourceValidator extends Command
         $ds = DIRECTORY_SEPARATOR;
         $resources = $this->argument('resources');
         $resources = !is_array($resources) ? [$resources] : $resources;
+        $module = $this->option('module');
+        $directory = app_path('Validators');
+
+        if ($module) {
+            $module = is_array($module) ? $module[0] : $module;
+            $moduleDirectory = config('support.module.directory') . $ds . ucfirst($module);
+            
+            $this->namespace = $this->getAppNamespace() . ucfirst($module);
+            $directory = config('support.module.directory') . $ds . ucfirst($module) . $ds . config('support.module.validators');
+            
+            if (!file_exists($moduleDirectory)) {
+                $this->error("The requested module '$moduleDirectory' does not exists!");
+                return;
+            }
+
+            if(config('support.namespace')) {
+                $this->namespace = config('support.namespace');
+            }
+        }
         
         foreach ($resources as $resource) {
-            $stub = file_get_contents(__DIR__ . $ds . '..' . $ds . '..' . $ds . '..' . $ds . '..' . $ds . 'resources' . $ds . 'Stubs' . $ds . 'Validator.stub');
+            $stub = file_get_contents(__DIR__ . $ds . '..' . $ds . '..' . $ds . '..' . $ds . '..' . $ds . 'resources' . $ds . 'Stubs' . $ds . (empty($module) ? 'Standard' : 'Modular') . $ds . 'Validator.stub');
             $stub = str_replace([
-                        '{{namespace}}',   '{{resource}}'], 
-                        [$this->namespace,  str_singular(ucfirst($resource))],
+                            '{{namespace}}',
+                            '{{validators}}',
+                            '{{resource}}'
+                        ], 
+                        [
+                            $this->namespace,
+                            str_replace($ds, '\\', config('support.module.validators')),
+                            str_singular(ucfirst($resource))
+                        ],
                         $stub);
-
-            $directory = app_path('Validators');
 
             if (!file_exists($directory)) {
                 mkdir($directory, 0777, true);

@@ -28,9 +28,9 @@ class SupportServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // $this->publishes([
-        //     __DIR__.'/Console/config/config.php' => config_path('support.php'),
-        // ]);
+        $this->publishes([
+            __DIR__ . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php' => config_path('support.php'),
+        ], 'support');
     }
 
     /**
@@ -40,11 +40,6 @@ class SupportServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // merge config
-        // $configPath = __DIR__ . '/Console/config/config.php';
-        // $this->mergeConfigFrom($configPath, 'support');
-
-        // register all the artisan commands
         $this->commands($this->commands);
     }
 }
