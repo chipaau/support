@@ -74,7 +74,8 @@ class MakeResourceController extends Command
                             '{{requests}}',
                             '{{repositories}}',
                             '{{model}}',
-                            '{{resource}}'
+                            '{{resource}}',
+                            '{{class}}'
                         ], 
                         [
                             $this->namespace,
@@ -82,7 +83,8 @@ class MakeResourceController extends Command
                             str_replace($ds, '\\', config('support.module.requests')),
                             str_replace($ds, '\\', config('support.module.repositories')),
                             str_replace($ds, '\\', config('support.module.models')),
-                            str_singular(ucfirst($resource))
+                            str_singular(ucfirst($resource)),
+                            str_plural(ucfirst($resource))
                         ], $stub);
 
             if (!file_exists($directory)) {
