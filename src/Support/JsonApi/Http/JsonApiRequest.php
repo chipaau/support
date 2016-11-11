@@ -2,26 +2,17 @@
 
 namespace Support\JsonApi\Http;
 
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Container\Container as ContainerInterface;
-use Illuminate\Contracts\Validation\ValidatesWhenResolved;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Factory as ValidationFactory;
-use Illuminate\Validation\Validator;
-use Neomerx\JsonApi\Contracts\Encoder\Parameters\EncodingParametersInterface;
-use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
-use Neomerx\JsonApi\Contracts\Http\Query\QueryCheckerInterface;
-use Neomerx\JsonApi\Contracts\Http\Query\QueryParametersParserInterface as PPI;
-use Neomerx\JsonApi\Exceptions\JsonApiException;
-use Neomerx\Limoncello\Contracts\JsonApi\SchemaContainerInterface as SchemaContainerInterface;
-use Neomerx\Limoncello\Contracts\JsonApi\SchemaInterface;
+use Support\Repositories\Repository;
 use Support\JsonApi\Errors\ErrorCollection;
-use Neomerx\Limoncello\I18n\Translate as T;
-use Neomerx\Limoncello\JsonApi\Decoder\DocumentObject;
-use Neomerx\Limoncello\JsonApi\Decoder\RelationshipsObject;
-use Neomerx\Limoncello\JsonApi\Decoder\ResourceObject;
 use Support\JsonApi\Core\DocumentDecoder;
+use Neomerx\JsonApi\Exceptions\JsonApiException;
 use Symfony\Component\HttpFoundation\Response;
+use Neomerx\JsonApi\Contracts\Factories\FactoryInterface;
+use Illuminate\Contracts\Validation\ValidatesWhenResolved;
+use Neomerx\JsonApi\Contracts\Http\Query\QueryCheckerInterface;
+use Neomerx\JsonApi\Contracts\Encoder\Parameters\EncodingParametersInterface;
+use Neomerx\JsonApi\Contracts\Http\Query\QueryParametersParserInterface as PPI;
 
 abstract class JsonApiRequest extends Request implements ValidatesWhenResolved
 {
@@ -81,6 +72,39 @@ abstract class JsonApiRequest extends Request implements ValidatesWhenResolved
     private $idx = null;
 
     /**
+     * @inheritdoc
+     */
+    protected function getParameterRules()
+    {
+        $rules = array();
+        if (!empty($this->pagingParameters())) {
+            $rules[self::RULE_ALLOWED_PAGING_PARAMS] = $this->pagingParameters();
+        }
+
+        if (!empty($this->unrecognizedParameters())) {
+            $rules[self::RULE_ALLOW_UNRECOGNIZED] = $this->unrecognizedParameters();
+        }
+
+        if (!empty($this->includeParameters())) {
+            $rules[self::RULE_ALLOWED_INCLUDE_PATHS] = $this->includeParameters();
+        }
+
+        if (!empty($this->fieldSetParameters())) {
+            $rules[self::RULE_ALLOWED_FIELD_SET_TYPES] = $this->fieldSetParameters();
+        }
+        
+        if (!empty($this->sortFieldParameters())) {
+            $rules[self::RULE_ALLOWED_SORT_FIELDS] = $this->sortFieldParameters();
+        }
+
+        if (!empty($this->filteringParameters())) {
+            $rules[self::RULE_ALLOWED_FILTERING_PARAMS] = $this->filteringParameters();
+        }
+        
+        return $rules;
+    }
+
+    /**
      * @param EncodingParametersInterface $requestParameters
      */
     public function setQueryParameters($requestParameters)
@@ -116,14 +140,6 @@ abstract class JsonApiRequest extends Request implements ValidatesWhenResolved
      */
     protected function validateParsed()
     {
-    }
-
-    /**
-     * @return null|array
-     */
-    protected function getParameterRules()
-    {
-        return null;
     }
 
     /**
@@ -177,26 +193,6 @@ abstract class JsonApiRequest extends Request implements ValidatesWhenResolved
     }
 
     /**
-     * @return RelationshipsObject[]
-     */
-    public function getBelongsTo()
-    {
-        $this->ensureDocumentIsParsed();
-
-        return $this->belongsTo;
-    }
-
-    /**
-     * @return RelationshipsObject[]
-     */
-    public function getBelongsToMany()
-    {
-        $this->ensureDocumentIsParsed();
-
-        return $this->belongsToMany;
-    }
-
-    /**
      * @param ErrorCollection $errors
      *
      * @return void
@@ -206,7 +202,7 @@ abstract class JsonApiRequest extends Request implements ValidatesWhenResolved
         $rules  = $this->getParameterRules();
         $params = $this->getParameters();
         if ($rules === null && $params->isEmpty() === false) {
-            $message = T::trans(T::KEY_ERR_PARAMETERS_NOT_SUPPORTED);
+            $message = 'Parameters are not supported.';
             empty($params->getFieldSets()) ?: $errors->addQueryParameterError(PPI::PARAM_FIELDS, $message);
             empty($params->getIncludePaths()) ?: $errors->addQueryParameterError(PPI::PARAM_INCLUDE, $message);
             empty($params->getSortParameters()) ?: $errors->addQueryParameterError(PPI::PARAM_SORT, $message);
@@ -280,14 +276,6 @@ abstract class JsonApiRequest extends Request implements ValidatesWhenResolved
     }
 
     /**
-     * @return array
-     */
-    protected function getDefaultRelationships()
-    {
-        return [];
-    }
-
-    /**
      * Ensure document is parsed.
      */
     private function ensureDocumentIsParsed()
@@ -308,34 +296,17 @@ abstract class JsonApiRequest extends Request implements ValidatesWhenResolved
 
         $errors = new ErrorCollection();
 
-        if ((($data = $doc->getData()) instanceof ResourceObject) === false) {
+        if (($data = $doc->getData()) === false) {
             // only single resource is supported in input
-            $errors->addDataError(T::trans(T::KEY_ERR_INVALID_ELEMENT));
+            $errors->addDataError("Invalid element");
             throw new JsonApiException($errors);
         }
 
         $schema        = $this->getSchema();
         $type          = $data->getType();
         $idx           = $data->getIdentifier();
-        $relationships = $data->getRelationships() + $this->getDefaultRelationships();
         $attributes    =
             array_intersect_key($data->getAttributes(), $schema->getAttributesMap());
-
-        $belongsTo = array_intersect_key($relationships, $schema->getBelongsToRelationshipsMap());
-        foreach ($belongsTo as $name => $relationship) {
-            /** @var RelationshipsObject $relationship */
-            if (is_array($relationship->getData()) === true) {
-                $errors->addRelationshipError($name, T::trans(T::KEY_ERR_INVALID_ELEMENT));
-            }
-        }
-
-        $belongsToMany = array_intersect_key($relationships, $schema->getBelongsToManyRelationshipsMap());
-        foreach ($belongsToMany as $name => $relationship) {
-            /** @var RelationshipsObject $relationship */
-            if (is_array($relationship->getData()) === false) {
-                $errors->addRelationshipError($name, T::trans(T::KEY_ERR_INVALID_ELEMENT));
-            }
-        }
 
         if ($errors->count() > 0) {
             throw new JsonApiException($errors);
@@ -344,8 +315,6 @@ abstract class JsonApiRequest extends Request implements ValidatesWhenResolved
         $this->type          = $type;
         $this->idx           = $idx;
         $this->resourceAttr  = $attributes;
-        $this->belongsTo     = $belongsTo;
-        $this->belongsToMany = $belongsToMany;
 
         $this->validateParsed();
 
@@ -366,5 +335,38 @@ abstract class JsonApiRequest extends Request implements ValidatesWhenResolved
         }
 
         return $this->jsonApiDocument;
+    }
+
+    protected function pagingParameters()
+    {
+        return [
+            Repository::PARAM_PAGING_SIZE,
+            Repository::PARAM_PAGING_NUMBER
+        ];
+    }
+
+    protected function unrecognizedParameters()
+    {
+        return array();
+    }
+
+    protected function includeParameters()
+    {
+        return array();
+    }
+
+    protected function fieldSetParameters()
+    {
+        return array();
+    }
+
+    protected function sortFieldParameters()
+    {
+        return array();
+    }
+
+    protected function filteringParameters()
+    {
+        return array();
     }
 }
