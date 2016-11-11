@@ -72,13 +72,15 @@ class MakeResourceSchema extends Command
                             '{{namespace}}',
                             '{{resource}}',
                             '{{schemas}}',
-                            '{{type}}'
+                            '{{type}}',
+                            '{{model}}'
                         ],
                         [
                             $this->namespace,
                             str_singular(ucfirst($resource)),
                             str_replace($ds, '\\', config('support.module.schemas')),
-                            snake_case(str_plural($resource), '-')
+                            snake_case(str_plural($resource), '-'),
+                            str_replace($ds, '\\', config('support.module.models'))
                         ], $stub);
 
             if (!file_exists($directory)) {

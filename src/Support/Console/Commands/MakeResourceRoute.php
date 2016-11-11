@@ -70,7 +70,7 @@ class MakeResourceRoute extends Command
             $stub = file_get_contents(__DIR__ . $ds . '..' . $ds . '..' . $ds . '..' . $ds . '..' . $ds . 'resources' . $ds . 'Stubs' . $ds . (empty($module) ? 'Standard' : 'Modular') . $ds . 'Route.stub');
             $stub = str_replace([
                         '{{resource}}',                    '{{class}}'],
-                        [str_singular(ucfirst($resource)),  str_plural(ucfirst($resource))],
+                        [str_plural(strtolower($resource)),  str_plural(ucfirst($resource))],
                         $stub);
 
             if (!file_exists($routesFile)) {

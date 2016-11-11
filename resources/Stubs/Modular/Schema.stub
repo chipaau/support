@@ -3,7 +3,7 @@
 namespace {{namespace}}\{{schemas}};
 
 use Support\JsonApi\Core\Schema;
-use {{namespace}}\{{resource}};
+use {{namespace}}\{{model}}\{{resource}};
 
 class {{resource}}Schema extends Schema
 {
