@@ -143,7 +143,7 @@ abstract class Repository implements RepositoryInterface
         }
 
         $query = $this->buildSorting($query, $this->getSorting($parameters));
-        return $this->paginateBuilder($query->getQuery(), $parameters);
+        return $this->paginateBuilder($query, $parameters);
     }
 
     protected function getColumnNames($columns, $key)
