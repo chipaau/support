@@ -52,9 +52,9 @@ abstract class Repository implements RepositoryInterface
             return  (is_null($builder)) ? $this->getModel()->with($with) : $builder->with($with);
         } else {
             if (is_null($builder)) {
-                return $this->getModel()->{$this->relation}()->with($with)->getQuery();
+                return $this->getModel()->{$this->relation}()->with($with);
             } else {
-             $builder->with($with);
+                return $builder->with($with);
             }
         }
     }
@@ -143,8 +143,7 @@ abstract class Repository implements RepositoryInterface
         }
 
         $query = $this->buildSorting($query, $this->getSorting($parameters));
-        
-        return $this->paginateBuilder($query, $parameters);
+        return $this->paginateBuilder($query->getQuery(), $parameters);
     }
 
     protected function getColumnNames($columns, $key)
@@ -276,7 +275,7 @@ abstract class Repository implements RepositoryInterface
      *
      * @return PagedDataInterface
      */
-    protected function paginateBuilder(Builder $builder, EncodingParametersInterface $parameters)
+    protected function paginateBuilder($builder, EncodingParametersInterface $parameters)
     {
         return $builder->paginate($this->getPageSize($parameters), $this->getFieldSets($parameters), 'page', $this->getPageNumber($parameters));
     }
