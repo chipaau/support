@@ -228,7 +228,12 @@ abstract class Repository implements RepositoryInterface
             } elseif (str_contains($term, ',')) {
                 $query->whereNotIn($column, explode(',', $term));
             } else {
-                $query = $this->buildSimpleWhere($query, $column, $operation, $term, $andOr);    
+                $isDate = (bool) strtotime($term);
+                if ($isDate) {
+                    $query->whereDate($column, $operation, $term, $andOr);
+                } else {
+                    $query = $this->buildSimpleWhere($query, $column, $operation, $term, $andOr);    
+                }
             }
         } else {
             if ($term === '\0') { // this mean treat is as a null
@@ -236,7 +241,12 @@ abstract class Repository implements RepositoryInterface
             } elseif (str_contains($term, ',')) {
                 $query->whereIn($column, explode(',', $term));
             } else {
-                $query = $this->buildSimpleWhere($query, $column, $operation, $term, $andOr); 
+                $isDate = (bool) strtotime($term);
+                if ($isDate) {
+                    $query->whereDate($column, $operation, $term, $andOr);
+                } else {
+                    $query = $this->buildSimpleWhere($query, $column, $operation, $term, $andOr);    
+                }
             }
         }
         return $query;
