@@ -60,7 +60,7 @@ abstract class Schema extends SchemaProvider implements SchemaInterface
         foreach ($model->attributesToArray() as $key => $value) {
             if($key == 'id') continue;
             if ($model->$key instanceof Carbon) {
-                $value = $model->$key->toIso8601String();
+                $value = $model->$key->format($this->carbonFormat);
             }
             if(isset($mappings[$key])) {
                 $result[$mappings[$key]] = $value;
