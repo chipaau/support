@@ -70,7 +70,9 @@ abstract class Schema extends SchemaProvider implements SchemaInterface
         }
 
         if ($model->pivot) {
-            foreach ($model->pivot->toArray() as $key => $value) {
+            $pivot = $model->pivot;
+            foreach ($pivot->toArray() as $key => $value) {
+                if ($key == $pivot->getForeignKey() || $key == $pivot->getOtherKey()) continue;
                     if(isset($mappings[$key])) {
                         $result[$mappings[$key]] = $value;
                     } else {
@@ -78,6 +80,7 @@ abstract class Schema extends SchemaProvider implements SchemaInterface
                     }
             }
         }
+        
         return $result;
     }
 
