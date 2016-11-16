@@ -23,10 +23,11 @@ abstract class Repository implements RepositoryInterface
     const DEFAULT_PAGE_SIZE = 15;
     const MAX_PAGE_SIZE = 30;
 
-    protected $container;
     protected $model;
-    protected $parameters;
     protected $query;
+    protected $connection;
+    protected $container;
+    protected $parameters;
     protected $resourceId = null;
     protected $relation = null;
 
@@ -441,5 +442,35 @@ abstract class Repository implements RepositoryInterface
     public function findBy(array $conditions, array $with = array())
     {
         return $this->model->with($with)->where($conditions)->firstOrFail();
+    }
+
+    protected function setConnection()
+    {
+        $this->connection = $this->getModel()->getConnection(); 
+    }
+
+    public function getConnection()
+    {
+        if (!$this->connection) {
+            $this->setConnection();
+        }
+
+        return $this->connection;
+    }
+
+    public function beginTransaction()
+    {
+        $this->connection = $this->getConnection();
+        $this->connection->beginTransaction();
+    }
+
+    public function commit()
+    {
+        $this->connection->commit();
+    }
+
+    public function rollback()
+    {
+        $this->connection->rollback();
     }
 }
