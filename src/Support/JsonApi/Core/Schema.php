@@ -68,6 +68,16 @@ abstract class Schema extends SchemaProvider implements SchemaInterface
                 $result[$key] = $value;
             }
         }
+
+        if ($model->pivot) {
+            foreach ($model->pivot->toArray() as $key => $value) {
+                    if(isset($mappings[$key])) {
+                        $result[$mappings[$key]] = $value;
+                    } else {
+                        $result[$key] = $value;
+                    }
+            }
+        }
         return $result;
     }
 
