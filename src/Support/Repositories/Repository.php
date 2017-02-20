@@ -391,10 +391,10 @@ abstract class Repository implements RepositoryInterface
     {
         $paging = $parameters->getPaginationParameters();
         $size = isset($paging[self::PARAM_PAGING_SIZE]) ? $paging[self::PARAM_PAGING_SIZE] : self::DEFAULT_PAGE_SIZE;
-        if($size > self::MAX_PAGE_SIZE) {
+        if($size > static::MAX_PAGE_SIZE) {
             $errors = $this->getErrorCollection();
             $errors->addQueryParameterError(QP::PARAM_PAGE, T::t(
-            'Page size more then ' . self::MAX_PAGE_SIZE . ' is not allowed'));
+            'Page size of more than ' . static::MAX_PAGE_SIZE . 'records is not allowed'));
             $this->throwException($errors);     
         }
         return $size;
