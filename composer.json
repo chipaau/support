@@ -5,10 +5,10 @@
     "require": {
         "laravel/socialite": "^2.0",
         "neomerx/json-api": "^0.8.10",
-        "illuminate/validation": "5.1.*|5.3.*",
-        "illuminate/support": "5.1.*|5.3.*",
-        "illuminate/container": "5.1.*|5.3.*",
-        "illuminate/config": "5.1.*|5.3.*"
+        "illuminate/validation": "5.*",
+        "illuminate/support": "5.*",
+        "illuminate/container": "5.*",
+        "illuminate/config": "5.*"
     },
     "autoload": {
         "psr-4": {
