@@ -19,8 +19,7 @@ class Application extends IlluminateApplication
      */
     protected function registerBaseServiceProviders()
     {
-        $this->register(new EventServiceProvider($this));
-
+        parent::registerBaseServiceProviders();
         $this->register(new RoutingServiceProvider($this));
     }
 }
