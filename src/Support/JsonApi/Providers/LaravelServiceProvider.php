@@ -176,7 +176,7 @@ class LaravelServiceProvider extends ServiceProvider
     {
         /** @var EventsDispatcherInterface $events */
         $events = $this->app->make(EventsDispatcherInterface::class);
-        $this->app->resolving(function (JsonApiRequest $request, $app) {
+        $this->app->resolving(JsonApiRequest::class, function ($request, $app) {
             // do not replace with $this->getRequest()
             // in tests when more than 1 request it will be executed more than once.
             // if replaced tests will fail

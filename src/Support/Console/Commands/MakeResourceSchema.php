@@ -2,12 +2,8 @@
 
 namespace Support\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Console\AppNamespaceDetectorTrait;
-
-class MakeResourceSchema extends Command
+class MakeResourceSchema extends AbstractCommand
 {
-    use AppNamespaceDetectorTrait;
 
     /**
      * The name and signature of the console command.

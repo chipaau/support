@@ -2,9 +2,7 @@
 
 namespace Support\Console\Commands;
 
-use Illuminate\Console\Command;
-
-class MakeResource extends Command
+class MakeResource extends AbstractCommand
 {    
     /**
      * The name and signature of the console command.

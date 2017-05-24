@@ -3,7 +3,6 @@
     "description": "laravel framework based, integrated with jsonapi support library with extended validation support",
     "type": "project",
     "require": {
-        "laravel/socialite": "^2.0",
         "neomerx/json-api": "^0.8.10",
         "illuminate/validation": "5.*",
         "illuminate/support": "5.*",
