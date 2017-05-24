@@ -3,6 +3,7 @@
 namespace Support\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Container\Container;
 
 /**
 * AbstractCommand
@@ -11,6 +12,6 @@ class AbstractCommand extends Command
 {
     protected function getAppNamespace()
     {
-        return $this->laravel->getInstance()->getNamespace();
+        return Container::getInstance()->getNamespace();
     }
 }
