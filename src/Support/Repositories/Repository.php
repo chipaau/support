@@ -162,7 +162,7 @@ abstract class Repository implements RepositoryInterface
         if(method_exists($query, 'getTable')) {
             $table = $query->getTable();
         }
-        return $query->where(function($query) use ($term, $columns, $term, $operation, $table) {
+        return $query->where(function($query) use ($term, $columns, $operation, $table) {
             foreach ($columns as $column) {
                 if (strpos($column, 'pivot.') === 0) {
                     $column = $table .'.'. substr($column, 6);
@@ -229,7 +229,7 @@ abstract class Repository implements RepositoryInterface
             } elseif (str_contains($term, ',')) {
                 $query->whereNotIn($column, explode(',', $term));
             } else {
-                $isDate = (bool) strtotime($term);
+                $isDate = $this->isDate($term);
                 if ($isDate) {
                     $query->whereDate($column, $operation, $term, $andOr);
                 } else {
@@ -242,7 +242,7 @@ abstract class Repository implements RepositoryInterface
             } elseif (str_contains($term, ',')) {
                 $query->whereIn($column, explode(',', $term));
             } else {
-                $isDate = (bool) strtotime($term);
+                $isDate = $this->isDate($term);
                 if ($isDate) {
                     $query->whereDate($column, $operation, $term, $andOr);
                 } else {
@@ -251,6 +251,21 @@ abstract class Repository implements RepositoryInterface
             }
         }
         return $query;
+    }
+
+    protected function isDate($value)
+    {
+        if ($value instanceof DateTime) {
+            return true;
+        }
+
+        if ((! is_string($value) && ! is_numeric($value)) || strtotime($value) === false) {
+            return false;
+        }
+
+        $date = date_parse($value);
+
+        return checkdate($date['month'], $date['day'], $date['year']);
     }
 
     protected function buildSimpleWhere($query, $column, $operation, $term, $andOr = 'OR')
