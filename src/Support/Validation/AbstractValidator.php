@@ -21,13 +21,6 @@ abstract class AbstractValidator
     protected $validator;
 
     /**
-     * ServiceProvider Model.
-     *
-     * @var object
-     */
-    protected $serviceProvider;
-
-    /**
      * Array of errors.
      *
      * @var array
@@ -94,7 +87,6 @@ abstract class AbstractValidator
     {
         $this->app = $app;
         $this->request = $this->app['request'];
-        $this->serviceProvider = $this->request['serviceProvider'];
         $this->params = $this->request->route()->parameters();
 
         if (!is_array($this->rules($this->request, $this->params))) {
